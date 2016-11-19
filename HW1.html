@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<script type="text/javascript">
+	
+
+function GameBoard(totalsize, dimension) { 
+  this.totalsize = totalsize;
+  this.dimension = dimension;
+  
+
+var cells = [];
+  for (var r = 0; r<dimension+1; r++) {
+  	cells[r] = [];
+  	for (var c = 0; c<dimension+1; c++) {
+  			var cell = {};
+  			  	cell.title = (r ==0 && c != 0) ? String.fromCharCode(c + 64) : (r !=0 && c == 0) ? r : '';
+  			  	cell.size = (totalsize / (dimension + 1)) + 'px';
+  				cell.index = (r ==0 | c == 0) ? 'axis' : (String.fromCharCode(c + 64) + r);
+  				cell.color = (r ==0 | c == 0) ? 'white' : ((r + c)%2 == 0) ? 'grey' : 'white';
+  				cell.access = (r ==0 | c == 0) ? false : true;
+  				cell.active = false;
+  			
+  			cells[r][c] = cell;
+  			
+  		};
+  	};
+  
+
+  this.cells = cells;
+
+};
+
+var chessBoard = new GameBoard(720, 8);
+
+
+    </script>
+
+    <title>HomeWork1</title>
+
+<style>
+	.board {
+		float: left;
+		border:1px solid black;
+		border-radius:2px;
+		position: relative;
+		z-index: 1;
+
+	}
+	.grey {
+		float: left;
+		border:1px solid blue;
+		border-radius:4px;
+		background-color: lightgrey;
+		font-size: 250%;
+		position: relative;
+		z-index: 100;
+		
+	}
+	.white {
+		float: left;
+		border:1px solid blue;
+		border-radius:4px;
+		background-color: white;
+		text-align: center;
+		font-size: 250%;
+		position: relative;
+		z-index: 101;
+		
+	}
+	.aktiv {
+		float: left;
+		border:1px solid blue;
+		border-radius:4px;
+		background-color: green;
+		height: 20px;
+		width: 20px;
+		position: relative;
+		z-index: 2;
+	}
+		
+</style>
+</head>
+<body>
+ <script type="text/javascript">
+ var div_board = document.createElement('div');
+    div_board.className = "board";
+    div_board.id = "frame";
+    div_board.style.height = (chessBoard.totalsize + 18) + 'px';
+    div_board.style.width = (chessBoard.totalsize + 18) + 'px';
+    document.body.appendChild(div_board);
+   
+  for (var i = 0; i < chessBoard.dimension+1; i++) {
+  	for (var j = 0; j < chessBoard.dimension+1; j++) {
+  	var cell = document.createElement('div');
+    cell.className = chessBoard.cells[i][j].color;
+    cell.id = chessBoard.cells[i][j].index;
+    cell.style.height = chessBoard.cells[0][0].size;
+    cell.style.width = chessBoard.cells[0][0].size;
+    cell.innerHTML = chessBoard.cells[i][j].title;
+    frame.appendChild(cell);
+    };
+  };
+
+
+var clc = document.getElementById("F3");
+ clc.addEventListener("mousedown", function() {
+    console.log("Обработчик нажатия на клетку F3.");
+});
+
+
+
+  
+</script>
+</body>
+</html>
