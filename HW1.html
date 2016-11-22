@@ -3,115 +3,185 @@
 <head>
 	<meta charset="utf-8" />
 	<script type="text/javascript">
+/*
+●	Разработать класс, генерирующий шахматную доску на странице. Конструктор в качестве параметра должен принимать селектор элемента в котором должна создаться доска, либо DOM Node. При этом должна быть возможность подписаться на события доски через созданный объект (не напрямую к DOM Node, а именно извне используя только объект доски), получения и установки координаты активной ячейки (шахматной координаты вида “A1”). Для генерации доски можно использовать произвольные html-тэги. Подумать какие свойства должны быть скрыты, а какие нет решение аргументировать в комментариях к коду.
+●	Добавить базовый класс, который мог бы генерировать таблицы (доски) любого размера и унаследовать от него разработанный класс шахматной доски.
+*/
 	
+// Создаем базовый класс, который в качестве параметра принимает селектор элемента в котором должна создаться доска
+function GameArea(entrypoint) {
+	this.elementToInsert = entrypoint;
+};
+
+
+// Создаем класс, описывающий игровую доску любого размера "totalsize" и размерности (количество мгровых полей по горизонтали/вертикали) "dimension" и принимающий при создании объекта указанные параметры ("totalsize" и "dimension")
 
 function GameBoard(totalsize, dimension) { 
+
+  // Наследуем текущий класс "GameBoard" от базового класса
+  GameArea.call(this);
+  
+  // и добавляем ему собственные свойства "totalsize", "dimension" и "cells" 
+  // где свойство "cells" представляет собой массив объектов типа "cell" (массив ячеек доски) 
   this.totalsize = totalsize;
   this.dimension = dimension;
   
 
-var cells = [];
-  for (var r = 0; r<dimension+1; r++) {
-  	cells[r] = [];
-  	for (var c = 0; c<dimension+1; c++) {
-  			var cell = {};
-  			  	cell.title = (r ==0 && c != 0) ? String.fromCharCode(c + 64) : (r !=0 && c == 0) ? r : '';
-  			  	cell.size = (totalsize / (dimension + 1)) + 'px';
-  				cell.index = (r ==0 | c == 0) ? 'axis' : (String.fromCharCode(c + 64) + r);
-  				cell.color = (r ==0 | c == 0) ? 'white' : ((r + c)%2 == 0) ? 'grey' : 'white';
-  				cell.access = (r ==0 | c == 0) ? false : true;
-  				cell.active = false;
-  			
-  			cells[r][c] = cell;
-  			
-  		};
-  	};
+		// Создаем двумерный массив из объектов типа "cell"
+		var cells = [];
+		for (var r = 0; r<dimension+1; r++) {
+		cells[r] = [];
+		for (var c = 0; c<dimension+1; c++) {
+				var cell = {};
+					cell.title = (r ==0 && c != 0) ? String.fromCharCode(c + 64) : (r !=0 && c == 0) ? r : '';
+					cell.size = (totalsize / (dimension + 1)) + 'px';
+					cell.index = (r ==0 || c == 0) ? 'axis' : (String.fromCharCode(c + 64) + r);
+					cell.color = (r ==0 || c == 0) ? 'white' : ((r + c)%2 == 0) ? 'grey' : 'white';
+					cell.access = (r ==0 || c == 0) ? false : true;
+					cell.active = false;
+				
+				cells[r][c] = cell;
+				
+			};
+		};
   
 
   this.cells = cells;
 
 };
 
-var chessBoard = new GameBoard(720, 8);
+// Для отрисовки шахматной доски нам необходим соответствующий метод
+// можно было сразу прописать его в конструкторе класса "GameBoard",
+// однако опишем его отдельно с помощью прототипа:
 
+GameBoard.prototype.draw = function() {
+	var here = document.querySelector('#PlayHere');
+	var div_board = document.createElement('div');
+	div_board.className = "board";
+	div_board.id = "frame";
+	div_board.style.height = (chessBoard.totalsize) + 'px';
+	div_board.style.width = (chessBoard.totalsize) + 'px';
+	here.appendChild(div_board);
 
-    </script>
+	var div_log = document.createElement('div');
+	div_log.className = "list";
+	div_log.id = "log";
+	div_log.style.height = (chessBoard.totalsize) + 'px';
+	div_log.style.width = (chessBoard.totalsize / 2) + 'px';
+	here.appendChild(div_log);
+		 
+	for (var i = 0; i < chessBoard.dimension+1; i++) {
+		for (var j = 0; j < chessBoard.dimension+1; j++) {
+			var cell = document.createElement('div');
+			cell.className = chessBoard.cells[i][j].color;
+			cell.id = chessBoard.cells[i][j].index;
+			cell.style.height = chessBoard.cells[0][0].size;
+			cell.style.width = chessBoard.cells[0][0].size;
+			cell.innerHTML = chessBoard.cells[i][j].title;
+			frame.appendChild(cell);
+		};
+  };
+};
 
-    <title>HomeWork1</title>
+// Добавляем перехват события собственными функциями извне 
+// (Спасибо Максиму, у которого подсмотрел реализацию метода!)
+GameBoard.prototype.addClickEvent = function(func) {
+	var area = document.querySelector('#frame');
+  area.addEventListener("click", func);
+}
+
+// а также метод активации выбранной ячейки путем добавления ей дополнительного класса "aktiv"     
+GameBoard.prototype.cellActivate = function(cellId) {
+	document.getElementById(cellId).className += " aktiv";
+}
+
+// и метод деактивации ячейки путем удаления "aktiv" из списка классов этой ячейки (с помощью Regexp)
+GameBoard.prototype.cellDeactivate = function(cellId) {
+	if (cellId) {
+		document.getElementById(cellId).className = document.getElementById(cellId).className.replace(/ aktiv/ig, "");
+	}
+};
+	
+
+	</script>
+
+	<title>HomeWork1</title>
 
 <style>
 	.board {
 		float: left;
-		border:1px solid black;
+		border:4px solid black;
 		border-radius:2px;
+		margin-left: 20px;
 		position: relative;
 		z-index: 1;
-
+	}
+	.list {
+		float: left;
+		border:1px solid black;
+		border-radius:2px;
+		margin-left: 20px;
+		position: relative;
+		z-index: 1;
+		font-size: 3em;
+		overflow-y: scroll;
 	}
 	.grey {
+		box-sizing: border-box;
 		float: left;
 		border:1px solid blue;
 		border-radius:4px;
 		background-color: lightgrey;
-		font-size: 250%;
+		font-size: 4em;
 		position: relative;
 		z-index: 100;
-		
 	}
 	.white {
+		box-sizing: border-box;
 		float: left;
 		border:1px solid blue;
 		border-radius:4px;
 		background-color: white;
 		text-align: center;
-		font-size: 250%;
+		font-size: 4em;
 		position: relative;
-		z-index: 101;
-		
+		z-index: 100;
 	}
 	.aktiv {
+		box-sizing: border-box;
 		float: left;
 		border:1px solid blue;
 		border-radius:4px;
-		background-color: green;
-		height: 20px;
-		width: 20px;
+		background-color: lightgreen;
+		font-size: 4em;
 		position: relative;
-		z-index: 2;
+		z-index: 101;
 	}
 		
 </style>
 </head>
-<body>
+<body id="PlayHere">
  <script type="text/javascript">
- var div_board = document.createElement('div');
-    div_board.className = "board";
-    div_board.id = "frame";
-    div_board.style.height = (chessBoard.totalsize + 18) + 'px';
-    div_board.style.width = (chessBoard.totalsize + 18) + 'px';
-    document.body.appendChild(div_board);
-   
-  for (var i = 0; i < chessBoard.dimension+1; i++) {
-  	for (var j = 0; j < chessBoard.dimension+1; j++) {
-  	var cell = document.createElement('div');
-    cell.className = chessBoard.cells[i][j].color;
-    cell.id = chessBoard.cells[i][j].index;
-    cell.style.height = chessBoard.cells[0][0].size;
-    cell.style.width = chessBoard.cells[0][0].size;
-    cell.innerHTML = chessBoard.cells[i][j].title;
-    frame.appendChild(cell);
-    };
+var chessBoard = new GameBoard(720, 8);   // Создаем новый объект класса "GameBoard" размером 720х720 и разрядностью 8х8
+
+chessBoard.elementToInsert = "PlayHere";  // Указываем id узла, где будет отрисована доска
+
+chessBoard.draw();                        // Рисуем доску
+
+var currCell = '', prevCell = '';         // Объявляем переменные для хранения индекса текущей и предыдущей ячейки
+chessBoard.addClickEvent(function(e) {    // и запускаем перехват кликов по доске 
+	chessBoard.cellDeactivate(prevCell);
+	if (event.target.id != "axis" && event.target.id != "frame") {
+		currCell = event.target.id;
+		chessBoard.cellActivate(currCell);
+		console.log(document.getElementById(currCell).className);
+		document.querySelector('#log').innerHTML += currCell + "<HR>";
+    document.querySelector('#log').scrollTop = document.querySelector('#log').scrollHeight;
+    prevCell = currCell;
+    
   };
-
-
-var clc = document.getElementById("F3");
- clc.addEventListener("mousedown", function() {
-    console.log("Обработчик нажатия на клетку F3.");
 });
-
-
-
-  
+ 
 </script>
 </body>
 </html>
