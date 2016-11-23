@@ -90,15 +90,15 @@ GameBoard.prototype.addClickEvent = function(func) {
   area.addEventListener("click", func);
 }
 
-// а также метод активации выбранной ячейки путем добавления ей дополнительного класса "aktiv"     
+// а также метод активации выбранной ячейки путем добавления ей дополнительного класса "active"     
 GameBoard.prototype.cellActivate = function(cellId) {
-	document.getElementById(cellId).className += " aktiv";
+	document.getElementById(cellId).className += " active";
 }
 
-// и метод деактивации ячейки путем удаления "aktiv" из списка классов этой ячейки (с помощью Regexp)
+// и метод деактивации ячейки путем удаления "active" из списка классов этой ячейки (с помощью Regexp)
 GameBoard.prototype.cellDeactivate = function(cellId) {
 	if (cellId) {
-		document.getElementById(cellId).className = document.getElementById(cellId).className.replace(/ aktiv/ig, "");
+		document.getElementById(cellId).className = document.getElementById(cellId).className.replace(/ active/ig, "");
 	}
 };
 	
@@ -147,7 +147,7 @@ GameBoard.prototype.cellDeactivate = function(cellId) {
 		position: relative;
 		z-index: 100;
 	}
-	.aktiv {
+	.active {
 		box-sizing: border-box;
 		float: left;
 		border:1px solid blue;

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<script type="text/javascript">
+function btnClick()
+        {
+           var Txt1 = document.Req.param.value;
+           var XHR = ("onload" in new XMLHttpRequest()) ? XMLHttpRequest : XDomainRequest;
+           var xhr = new XHR();
+           xhr.open('GET', 'http://127.0.0.1:3000?name='+Txt1, true);
+           xhr.onload = function() {
+			  /*document.getElementById('ex1').innerHTML+= this.responseText + "<HR>";*/
+			  if (Txt1 == "") {
+			  	var resjson = JSON.parse(this.responseText);
+			    document.getElementById('ex1').innerHTML+= Object.keys(resjson) + "<HR>";
+			    /*for (var key in resjson) document.getElementById('ex1').innerHTML+= resjson[key[brand]] + "<HR>";*/
+			  } else {
+			  	document.getElementById('ex1').innerHTML+= this.responseText + "<HR>";
+			  }
+			  
+			}
+
+			xhr.onerror = function() {
+			  alert( 'Ошибка ' + this.status );
+			}
+
+			xhr.send();
+
+
+
+
+
+
+           /*document.getElementById('ex1').innerHTML+= this.responseText + "<HR>";*/
+        }
+
+	</script>
+
+	<title>HomeWork2_1</title>
+
+<style>
+	.board {
+		float: left;
+		border:4px solid black;
+		border-radius:2px;
+		margin-left: 20px;
+		position: relative;
+		z-index: 1;
+	}
+	.list {
+		float: left;
+		border:1px solid black;
+		border-radius:2px;
+		margin-left: 20px;
+		position: relative;
+		z-index: 1;
+		font-size: 3em;
+		overflow-y: scroll;
+	}
+	.grey {
+		box-sizing: border-box;
+		float: left;
+		border:1px solid blue;
+		border-radius:4px;
+		background-color: lightgrey;
+		font-size: 4em;
+		position: relative;
+		z-index: 100;
+	}
+	.white {
+		box-sizing: border-box;
+		float: left;
+		border:1px solid blue;
+		border-radius:4px;
+		background-color: white;
+		text-align: center;
+		font-size: 4em;
+		position: relative;
+		z-index: 100;
+	}
+	.active {
+		box-sizing: border-box;
+		float: left;
+		border:1px solid blue;
+		border-radius:4px;
+		background-color: lightgreen;
+		font-size: 4em;
+		position: relative;
+		z-index: 101;
+	}
+	#reqinput {
+		height: 40px;
+		width: 400px;
+		float: left;
+		padding-bottom: 5px;
+		margin-left: 20px;
+		position: relative;
+		z-index: 1;
+	}
+	#ex1 {
+		width: 400px;
+		float: left;
+		padding-bottom: 5px;
+		margin-left: 20px;
+		position: relative;
+		z-index: 1;
+	}
+		
+</style>
+</head>
+<body>
+<div id="main">
+  <H1>Проверка отправки Ajax запроса</H1>
+
+ <p>
+  <FORM NAME="Req" id="reqinput">
+  <fieldset id="myFieldset">
+    <input type="text" id="pole" name="param">
+    <INPUT TYPE="button" NAME="bt" VALUE="Отправить запрос" onClick="btnClick()";>
+</fieldset>
+</FORM>
+ <p>
+ <p>
+ <p>
+</div>
+<div id="ex1">  
+</div>
+</body>
+</html>

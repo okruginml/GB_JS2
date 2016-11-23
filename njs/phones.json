@@ -1,0 +1,31 @@
+{
+  "A820": {
+    "brand": "Lenovo",
+    "price": 8300
+  },
+
+  "S36": {
+    "brand": "BQ",
+    "price": 3700
+  },
+
+  "D700": {
+    "brand": "DooGee",
+    "price": 5400
+  },
+
+  "Note5": {
+    "brand": "Samsung",
+    "price": 26000
+  },
+
+  "H250": {
+    "brand": "Huawei",
+    "price": 6200
+  },
+
+  "iPhone 6s": {
+    "brand": "Apple",
+    "price": 34000
+  }
+}
