@@ -3,47 +3,23 @@
 var express = require('express'),
     cors = require('cors'),
     port = process.env.PORT || 3000,
-    app = express();
+    app = express(),
+
+    chess = require('./chess.json'),
+    phones = require('./phones.json');
 
 
 app.get('/', cors(), function(req, res){
-  var tessst = req.query.name;
-  if (tessst == "") {
-    res.json({
-      "Lenovo": {
-      "model": "A820",
-      "price": 8300
-    },
-
-    "BQ": {
-      "model": "S36",
-      "price": 3700
-    },
-
-    "DooGee": {
-      "model": "D700",
-      "price": 5400
-    },
-
-    "Samsung": {
-      "model": "Note5",
-      "price": 26000
-    },
-
-    "Huawei": {
-      "model": "H250",
-      "price": 6200
-    },
-
-    "Apple": {
-      "model": "iPhone 6s",
-      "price": 34000
-    }
-    });
+  var key = req.query.param;
+  if (key == "") {
+    res.json(phones);
+  }
+  if (key == "chess") {
+    res.json(chess);
   }
   else {
    res.json({
-      "Вы ввели ": tessst
+      "Вы ввели ": key
     });
   };
 });
@@ -55,4 +31,4 @@ if(!module.parent){
     console.log('Express server listening on port ' + port + '.');
   });
 }
-/*text: 'Hello ' + tessst + '!'*/
+/*text: 'Hello ' + key + '!'*/

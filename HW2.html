@@ -37,7 +37,7 @@ function GameBoard(totalsize, dimension) {
 					cell.title = (r ==0 && c != 0) ? String.fromCharCode(c + 64) : (r !=0 && c == 0) ? r : '';
 					cell.size = (totalsize / (dimension + 1)) + 'px';
 					cell.index = (r ==0 || c == 0) ? 'axis' : (String.fromCharCode(c + 64) + r);
-					cell.color = (r ==0 || c == 0) ? 'white' : ((r + c)%2 == 0) ? 'grey' : 'white';
+					cell.color = (r ==0 || c == 0) ? 'axis white' : ((r + c)%2 == 0) ? 'cell grey' : 'cell white';
 					cell.access = (r ==0 || c == 0) ? false : true;
 					cell.active = false;
 				
@@ -91,24 +91,39 @@ GameBoard.prototype.addClickEvent = function(func) {
   area.addEventListener("click", func);
 }
 
-// а также метод активации выбранной ячейки путем добавления ей дополнительного класса "active"     
-GameBoard.prototype.cellActivate = function(cellId) {
-	document.getElementById(cellId).className += " active";
-}
+// Прототип, описывающий метод первоначальной расстановки фигур
+GameBoard.prototype.setupChess = function(func) {
+	var XHR = ("onload" in new XMLHttpRequest()) ? XMLHttpRequest : XDomainRequest;
+	var xhr = new XHR();
+	var route="chess";
+	xhr.open('GET', 'http://127.0.0.1:3000?param='+route, true);
+	xhr.onload = function() {
+		var resjson = JSON.parse(xhr.responseText);
+	  for (var key in resjson) {
+	  	document.getElementById(key).innerHTML= resjson[key];
+		};
+	};
 
-// и метод деактивации ячейки путем удаления "active" из списка классов этой ячейки (с помощью Regexp)
-GameBoard.prototype.cellDeactivate = function(cellId) {
-	if (cellId) {
-		document.getElementById(cellId).className = document.getElementById(cellId).className.replace(/ active/ig, "");
-	}
+	xhr.onerror = function() {
+		alert( 'Ошибка ' + xhr.status );
+	};
+	xhr.send();
 };
-	
+
 
 	</script>
 
-	<title>HomeWork1</title>
+	<title>HomeWork2</title>
 
 <style>
+@font-face {font-family: "Chess Leipzig";    
+            src: url("http://db.onlinewebfonts.com/t/3766f2535139acb76ae60fb465b731b5.eot");
+            src: url("http://db.onlinewebfonts.com/t/3766f2535139acb76ae60fb465b731b5.eot?#iefix") format("embedded-opentype"),
+                url("http://db.onlinewebfonts.com/t/3766f2535139acb76ae60fb465b731b5.woff2") format("woff2"),
+                url("http://db.onlinewebfonts.com/t/3766f2535139acb76ae60fb465b731b5.woff") format("woff"),
+                url("http://db.onlinewebfonts.com/t/3766f2535139acb76ae60fb465b731b5.ttf") format("truetype"),
+                url("http://db.onlinewebfonts.com/t/3766f2535139acb76ae60fb465b731b5.svg#Chess Leipzig") format("svg");
+        }
 	.board {
 		float: left;
 		border:4px solid black;
@@ -116,6 +131,9 @@ GameBoard.prototype.cellDeactivate = function(cellId) {
 		margin-left: 20px;
 		position: relative;
 		z-index: 1;
+	}
+	.cell {
+		font-family: "Chess Leipzig";
 	}
 	.list {
 		float: left;
@@ -134,6 +152,7 @@ GameBoard.prototype.cellDeactivate = function(cellId) {
 		border-radius:4px;
 		background-color: lightgrey;
 		font-size: 4em;
+		text-align: center;
 		position: relative;
 		z-index: 100;
 	}
@@ -145,6 +164,7 @@ GameBoard.prototype.cellDeactivate = function(cellId) {
 		background-color: white;
 		text-align: center;
 		font-size: 4em;
+		text-align: center;
 		position: relative;
 		z-index: 100;
 	}
@@ -158,6 +178,16 @@ GameBoard.prototype.cellDeactivate = function(cellId) {
 		position: relative;
 		z-index: 101;
 	}
+	.selected {
+		box-sizing: border-box;
+		float: left;
+		border:1px solid blue;
+		border-radius:4px;
+		background-color: lightpink;
+		font-size: 4em;
+		position: relative;
+		z-index: 102;
+	}
 		
 </style>
 </head>
@@ -167,21 +197,27 @@ var chessBoard = new GameBoard(720, 8);   // Создаем новый объе�
 
 chessBoard.elementToInsert = "PlayHere";  // Указываем id узла, где будет отрисована доска
 
-chessBoard.draw();                        // Рисуем доску
+chessBoard.draw();												// Рисуем доску
+
+chessBoard.setupChess();												// Производим первоначальную расстановку фигур
 
 var currCell = '*', prevCell = '';         // Объявляем переменные для хранения индекса текущей и предыдущей ячейки
 chessBoard.addClickEvent(function(e) {    // и запускаем перехват кликов по доске 
-	if (prevCell != '' && prevCell != event.target.id) chessBoard.cellDeactivate(prevCell);
+	if (prevCell != '' && prevCell != event.target.id) {
+		document.getElementById(prevCell).classList.remove("active");
+		document.getElementById(prevCell).classList.remove("selected");
+	};
+	if (prevCell != '' && prevCell == event.target.id && document.getElementById(event.target.id).classList.contains("active")) 
+		document.getElementById(prevCell).classList.toggle("selected");
 	if (event.target.id != "axis" && event.target.id != "frame" && prevCell != event.target.id) {
 		currCell = event.target.id;
-		chessBoard.cellActivate(currCell);
-		console.log(document.getElementById(currCell).className);
+		document.getElementById(currCell).classList.toggle("active");
 		document.querySelector('#log').innerHTML += currCell + "<HR>";
-    document.querySelector('#log').scrollTop = document.querySelector('#log').scrollHeight;
-    prevCell = currCell;
-    
-  };
+        document.querySelector('#log').scrollTop = document.querySelector('#log').scrollHeight;
+        prevCell = currCell;
+    };
 });
+
  
 </script>
 </body>

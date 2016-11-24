@@ -1,31 +1,31 @@
 {
-  "A820": {
-    "brand": "Lenovo",
+  "Lenovo": {
+    "model": "A820",
     "price": 8300
   },
 
-  "S36": {
-    "brand": "BQ",
+  "BQ": {
+    "model": "S36",
     "price": 3700
   },
 
-  "D700": {
-    "brand": "DooGee",
+  "DooGee": {
+    "model": "D700",
     "price": 5400
   },
 
-  "Note5": {
-    "brand": "Samsung",
+  "Samsung": {
+    "model": "Note5",
     "price": 26000
   },
 
-  "H250": {
-    "brand": "Huawei",
+  "Huawei": {
+    "model": "H250",
     "price": 6200
   },
 
-  "iPhone 6s": {
-    "brand": "Apple",
+  "Apple": {
+    "model": "iPhone 6s",
     "price": 34000
   }
 }
